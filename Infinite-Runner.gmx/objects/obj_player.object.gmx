@@ -29,6 +29,7 @@
 hsp = 0;
 grav = 1;
 grounded = 0;
+djump = 0;
 </string>
           </argument>
         </arguments>
@@ -54,24 +55,38 @@ grounded = 0;
             <string>//sets infinite running at speed 7
 x += 4
 
-Key_Jump = keyboard_check_direct(vk_up);
+Key_Jump = keyboard_check_pressed(vk_up);
 
 //jumping
 
 if (Key_Jump)
 {
-    if (grounded) vsp = -15;
+    if (grounded)
+    {
+     vsp = -15;
+    }
+    else
+    {
+        if (djump)
+        {
+        vsp = -10;
+        djump = 0;
+        }
+    }
 }
-
 vsp  += grav;
 
 //Vertical Collision
 
 if place_meeting(x,y+vsp,par_wall)
 {
-    while (!place_meeting(x,y+1,par_wall)) y += 1;
-    vsp = 0;
+    while (!place_meeting(x,y+sign(vsp),par_wall)) y += sign(vsp);
+    if (sign(vsp) == 1) 
+    {
     grounded = 1;
+    djump = 1;
+    }
+     vsp = 0;
 }
 else
 {
